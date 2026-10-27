@@ -2,6 +2,9 @@
 
 A SCARA arm in PyBullet builds a small brick wall. Bricks come one at a time on a tray, a depth camera finds each one, a two-finger gripper picks it up by friction, and the arm lays it in running bond.
 
+[brick_laying.webm](https://github.com/user-attachments/assets/87aa0f85-3926-439f-a133-49f345a1f1f0)
+
+
 ## Run
 
 ```bash
