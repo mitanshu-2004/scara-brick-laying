@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<robot name="scara">
+  <material name="body"><color rgba="0.95 0.55 0.1 1"/></material>
+  <material name="dark"><color rgba="0.2 0.2 0.22 1"/></material>
+  <material name="steel"><color rgba="0.75 0.75 0.78 1"/></material>
+
+  <link name="base">
+    <inertial><mass value="10"/><inertia ixx="1" iyy="1" izz="1" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0 0 0.02"/><geometry><box size="0.3 0.3 0.04"/></geometry><material name="dark"/></visual>
+    <visual><origin xyz="0 0 0.3"/><geometry><cylinder radius="0.07" length="0.56"/></geometry><material name="body"/></visual>
+    <collision><origin xyz="0 0 0.3"/><geometry><cylinder radius="0.07" length="0.6"/></geometry></collision>
+  </link>
+  <link name="link1">
+    <inertial><mass value="1"/><inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0 0 0.03"/><geometry><cylinder radius="0.075" length="0.08"/></geometry><material name="dark"/></visual>
+    <visual><origin xyz="0.2 0 0.03"/><geometry><box size="0.4 0.1 0.06"/></geometry><material name="body"/></visual>
+    <visual><origin xyz="0.4 0 0.03"/><geometry><cylinder radius="0.06" length="0.07"/></geometry><material name="body"/></visual>
+  </link>
+  <link name="link2">
+    <inertial><mass value="1"/><inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0 0 0.09"/><geometry><cylinder radius="0.055" length="0.07"/></geometry><material name="dark"/></visual>
+    <visual><origin xyz="0.175 0 0.09"/><geometry><box size="0.35 0.09 0.05"/></geometry><material name="body"/></visual>
+    <visual><origin xyz="0.35 0 0.09"/><geometry><cylinder radius="0.05" length="0.07"/></geometry><material name="dark"/></visual>
+  </link>
+  <!-- long enough to pass through link2 at full stroke -->
+  <link name="shaft">
+    <inertial><mass value="0.5"/><inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0 0 0.34"/><geometry><cylinder radius="0.015" length="0.62"/></geometry><material name="steel"/></visual>
+  </link>
+  <!-- palm bottom = the point IK aims at -->
+  <link name="gripper">
+    <inertial><mass value="0.3"/><inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0 0 0.01"/><geometry><box size="0.12 0.16 0.02"/></geometry><material name="dark"/></visual>
+  </link>
+  <link name="finger_l">
+    <inertial><mass value="0.1"/><inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><geometry><box size="0.1 0.01 0.06"/></geometry><material name="steel"/></visual>
+    <collision><geometry><box size="0.1 0.01 0.06"/></geometry></collision>
+  </link>
+  <link name="finger_r">
+    <inertial><mass value="0.1"/><inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><geometry><box size="0.1 0.01 0.06"/></geometry><material name="steel"/></visual>
+    <collision><geometry><box size="0.1 0.01 0.06"/></geometry></collision>
+  </link>
+  <joint name="shoulder" type="revolute">
+    <parent link="base"/><child link="link1"/><origin xyz="0 0 0.6"/><axis xyz="0 0 1"/>
+    <limit lower="-2.9" upper="2.9" effort="500" velocity="2"/>
+  </joint>
+  <joint name="elbow" type="revolute">
+    <parent link="link1"/><child link="link2"/><origin xyz="0.4 0 0"/><axis xyz="0 0 1"/>
+    <limit lower="-2.9" upper="2.9" effort="500" velocity="2"/>
+  </joint>
+  <joint name="shaft" type="prismatic">
+    <parent link="link2"/><child link="shaft"/><origin xyz="0.35 0 0"/><axis xyz="0 0 -1"/>
+    <limit lower="0" upper="0.58" effort="500" velocity="0.5"/>
+  </joint>
+  <joint name="wrist" type="revolute">
+    <parent link="shaft"/><child link="gripper"/><origin xyz="0 0 0"/><axis xyz="0 0 1"/>
+    <limit lower="-3.2" upper="3.2" effort="500" velocity="3"/>
+  </joint>
+  <!-- fingers open 130 mm apart, touch a 90 mm brick at 20 mm travel -->
+  <joint name="finger_l" type="prismatic">
+    <parent link="gripper"/><child link="finger_l"/><origin xyz="0 0.07 -0.025"/><axis xyz="0 -1 0"/>
+    <limit lower="0" upper="0.03" effort="100" velocity="0.1"/>
+  </joint>
+  <joint name="finger_r" type="prismatic">
+    <parent link="gripper"/><child link="finger_r"/><origin xyz="0 -0.07 -0.025"/><axis xyz="0 1 0"/>
+    <limit lower="0" upper="0.03" effort="100" velocity="0.1"/>
+  </joint>
+</robot>
